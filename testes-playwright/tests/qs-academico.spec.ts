@@ -5,6 +5,7 @@ test.describe('QS Acadêmico — Testes do Sistema de Notas', () => {
     await page.goto('/');
   });
 
+  // ========== GRUPO 1: Cadastro de Alunos ==========
 
   test.describe('Cadastro de Alunos', () => {
 
@@ -16,6 +17,7 @@ test.describe('QS Acadêmico — Testes do Sistema de Notas', () => {
 
       await page.getByRole('button', { name: 'Cadastrar' }).click();
 
+      // Verificar que o aluno aparece na tabela
       await expect(page.locator('#tabela-alunos tbody tr')).toHaveCount(1);
       await expect(page.getByText('João Silva')).toBeVisible();
     });
@@ -38,11 +40,13 @@ test.describe('QS Acadêmico — Testes do Sistema de Notas', () => {
 
       await page.getByRole('button', { name: 'Cadastrar' }).click();
 
+      // A tabela deve continuar sem dados reais
       await expect(page.locator('#tabela-alunos tbody td.texto-central')).toBeVisible();
     });
 
   });
 
+  // ========== GRUPO 2: Cálculo de Média ==========
 
   test.describe('Cálculo de Média', () => {
 
@@ -54,12 +58,14 @@ test.describe('QS Acadêmico — Testes do Sistema de Notas', () => {
 
       await page.getByRole('button', { name: 'Cadastrar' }).click();
 
+      // Média esperada: (8 + 6 + 10) / 3 = 8.00
       const celulaMedia = page.locator('#tabela-alunos tbody tr td').nth(4);
       await expect(celulaMedia).toHaveText('8.00');
     });
 
   });
 
+  // ========== GRUPO 3: Validação de Notas ==========
 
   test.describe('Validação de Notas', () => {
 
@@ -71,6 +77,7 @@ test.describe('QS Acadêmico — Testes do Sistema de Notas', () => {
 
       await page.getByRole('button', { name: 'Cadastrar' }).click();
 
+      // A tabela deve permanecer sem dados reais (nota inválida)
       await expect(page.locator('#tabela-alunos tbody td.texto-central')).toBeVisible();
     });
 
@@ -82,15 +89,18 @@ test.describe('QS Acadêmico — Testes do Sistema de Notas', () => {
 
       await page.getByRole('button', { name: 'Cadastrar' }).click();
 
+      // A tabela deve permanecer sem dados reais (nota inválida)
       await expect(page.locator('#tabela-alunos tbody td.texto-central')).toBeVisible();
     });
 
   });
 
+  // ========== GRUPO 4: Busca por Nome ==========
+
   test.describe('Busca por Nome', () => {
 
     test('deve exibir apenas o aluno correspondente ao termo buscado', async ({ page }) => {
-
+      // Cadastrar dois alunos
       await page.getByLabel('Nome do Aluno').fill('Lucas Oliveira');
       await page.getByLabel('Nota 1').fill('7');
       await page.getByLabel('Nota 2').fill('8');
@@ -103,13 +113,17 @@ test.describe('QS Acadêmico — Testes do Sistema de Notas', () => {
       await page.getByLabel('Nota 3').fill('7');
       await page.getByRole('button', { name: 'Cadastrar' }).click();
 
+      // Buscar pelo nome do primeiro aluno
       await page.getByPlaceholder('Buscar aluno...').fill('Lucas');
 
+      // Apenas Lucas deve estar visível
       await expect(page.getByText('Lucas Oliveira')).toBeVisible();
       await expect(page.getByText('Fernanda Rocha')).not.toBeVisible();
     });
 
   });
+
+  // ========== GRUPO 5: Exclusão de Aluno ==========
 
   test.describe('Exclusão de Aluno', () => {
 
@@ -120,37 +134,45 @@ test.describe('QS Acadêmico — Testes do Sistema de Notas', () => {
       await page.getByLabel('Nota 3').fill('9');
       await page.getByRole('button', { name: 'Cadastrar' }).click();
 
+      // Confirmar que o aluno foi cadastrado
       await expect(page.locator('#tabela-alunos tbody tr')).toHaveCount(1);
 
+      // Excluir o aluno
       await page.getByRole('button', { name: 'Excluir' }).click();
 
+      // A tabela deve voltar ao estado vazio
       await expect(page.locator('#tabela-alunos tbody td.texto-central')).toBeVisible();
     });
 
   });
 
+  // ========== GRUPO 6: Estatísticas ==========
+
   test.describe('Estatísticas', () => {
 
     test('deve exibir totais corretos nos cards de estatísticas', async ({ page }) => {
-
+      // Aluno Aprovado: média >= 7
       await page.getByLabel('Nome do Aluno').fill('Aprovado Teste');
       await page.getByLabel('Nota 1').fill('8');
       await page.getByLabel('Nota 2').fill('7');
       await page.getByLabel('Nota 3').fill('9');
       await page.getByRole('button', { name: 'Cadastrar' }).click();
 
+      // Aluno em Recuperação: média >= 5 e < 7
       await page.getByLabel('Nome do Aluno').fill('Recuperacao Teste');
       await page.getByLabel('Nota 1').fill('5');
       await page.getByLabel('Nota 2').fill('6');
       await page.getByLabel('Nota 3').fill('5');
       await page.getByRole('button', { name: 'Cadastrar' }).click();
 
+      // Aluno Reprovado: média < 5
       await page.getByLabel('Nome do Aluno').fill('Reprovado Teste');
       await page.getByLabel('Nota 1').fill('2');
       await page.getByLabel('Nota 2').fill('3');
       await page.getByLabel('Nota 3').fill('1');
       await page.getByRole('button', { name: 'Cadastrar' }).click();
 
+      // Verificar totais nos cards
       await expect(page.locator('#card-aprovados')).toContainText('1');
       await expect(page.locator('#card-recuperacao')).toContainText('1');
       await expect(page.locator('#card-reprovados')).toContainText('1');
@@ -158,6 +180,7 @@ test.describe('QS Acadêmico — Testes do Sistema de Notas', () => {
 
   });
 
+  // ========== GRUPO 7: Situação — Aprovado ==========
 
   test.describe('Situação — Aprovado', () => {
 
@@ -169,12 +192,14 @@ test.describe('QS Acadêmico — Testes do Sistema de Notas', () => {
 
       await page.getByRole('button', { name: 'Cadastrar' }).click();
 
+      // Média: (7 + 8 + 9) / 3 = 8.00 → Aprovado
       const celulaSituacao = page.locator('#tabela-alunos tbody tr td').nth(5);
       await expect(celulaSituacao).toHaveText('Aprovado');
     });
 
   });
 
+  // ========== GRUPO 8: Situação — Reprovado ==========
 
   test.describe('Situação — Reprovado', () => {
 
@@ -186,11 +211,14 @@ test.describe('QS Acadêmico — Testes do Sistema de Notas', () => {
 
       await page.getByRole('button', { name: 'Cadastrar' }).click();
 
+      // Média: (3 + 4 + 2) / 3 = 3.00 → Reprovado
       const celulaSituacao = page.locator('#tabela-alunos tbody tr td').nth(5);
       await expect(celulaSituacao).toHaveText('Reprovado');
     });
 
   });
+
+  // ========== GRUPO 9: Múltiplos Cadastros ==========
 
   test.describe('Múltiplos Cadastros', () => {
 
