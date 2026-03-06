@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('QS Acadêmico — Testes do Sistema de Notas', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/');
+    await page.goto('');
     await expect(page.getByRole('textbox', { name: 'Nome do Aluno' })).toBeVisible();
   });
 
