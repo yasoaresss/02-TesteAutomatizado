@@ -1,23 +1,43 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('QS Acadêmico — Testes do Sistema de Notas', () => {
+
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
+
+    // ✅ BOA PRÁTICA: Verificar título da página uma vez só no beforeEach,
+    // garantindo que todos os testes partem de uma página válida.
+    await expect(page).toHaveTitle(/QS Acadêmico/);
   });
 
   // ========== GRUPO 1: Cadastro de Alunos ==========
 
   test.describe('Cadastro de Alunos', () => {
 
+    test('deve exibir a seção de cadastro e o placeholder do campo nome ao carregar a página', async ({ page }) => {
+      // ✅ toBeVisible() — confirma que a seção de cadastro está renderizada
+      await expect(page.locator('#secao-cadastro')).toBeVisible();
+
+      // ✅ toHaveAttribute() — verifica o placeholder acessível do campo nome
+      await expect(page.getByLabel('Nome do Aluno')).toHaveAttribute(
+        'placeholder', 'Digite o nome completo'
+      );
+
+      // ✅ getByText() — tabela começa no estado de placeholder
+      await expect(page.getByText('Nenhum aluno cadastrado.')).toBeVisible();
+    });
+
     test('deve cadastrar um aluno com dados válidos', async ({ page }) => {
+      // ✅ getByLabel() — seletor acessível, mais robusto que CSS
       await page.getByLabel('Nome do Aluno').fill('João Silva');
       await page.getByLabel('Nota 1').fill('7');
       await page.getByLabel('Nota 2').fill('8');
       await page.getByLabel('Nota 3').fill('6');
 
+      // ✅ getByRole() — seletor semântico para botões
       await page.getByRole('button', { name: 'Cadastrar' }).click();
 
-      // Verificar que o aluno aparece na tabela
+      // ✅ toHaveCount() — verifica número exato de linhas na tabela
       await expect(page.locator('#tabela-alunos tbody tr')).toHaveCount(1);
       await expect(page.getByText('João Silva')).toBeVisible();
     });
@@ -40,8 +60,8 @@ test.describe('QS Acadêmico — Testes do Sistema de Notas', () => {
 
       await page.getByRole('button', { name: 'Cadastrar' }).click();
 
-      // A tabela deve continuar sem dados reais
-      await expect(page.locator('#tabela-alunos tbody td.texto-central')).toBeVisible();
+      // ✅ getByText() — placeholder da tabela deve continuar visível
+      await expect(page.getByText('Nenhum aluno cadastrado.')).toBeVisible();
     });
 
   });
@@ -77,8 +97,8 @@ test.describe('QS Acadêmico — Testes do Sistema de Notas', () => {
 
       await page.getByRole('button', { name: 'Cadastrar' }).click();
 
-      // A tabela deve permanecer sem dados reais (nota inválida)
-      await expect(page.locator('#tabela-alunos tbody td.texto-central')).toBeVisible();
+      // ✅ getByText() — nota inválida não gera cadastro; placeholder persiste
+      await expect(page.getByText('Nenhum aluno cadastrado.')).toBeVisible();
     });
 
     test('deve rejeitar nota negativa', async ({ page }) => {
@@ -89,8 +109,7 @@ test.describe('QS Acadêmico — Testes do Sistema de Notas', () => {
 
       await page.getByRole('button', { name: 'Cadastrar' }).click();
 
-      // A tabela deve permanecer sem dados reais (nota inválida)
-      await expect(page.locator('#tabela-alunos tbody td.texto-central')).toBeVisible();
+      await expect(page.getByText('Nenhum aluno cadastrado.')).toBeVisible();
     });
 
   });
@@ -100,7 +119,6 @@ test.describe('QS Acadêmico — Testes do Sistema de Notas', () => {
   test.describe('Busca por Nome', () => {
 
     test('deve exibir apenas o aluno correspondente ao termo buscado', async ({ page }) => {
-      // Cadastrar dois alunos
       await page.getByLabel('Nome do Aluno').fill('Lucas Oliveira');
       await page.getByLabel('Nota 1').fill('7');
       await page.getByLabel('Nota 2').fill('8');
@@ -113,10 +131,13 @@ test.describe('QS Acadêmico — Testes do Sistema de Notas', () => {
       await page.getByLabel('Nota 3').fill('7');
       await page.getByRole('button', { name: 'Cadastrar' }).click();
 
-      // Buscar pelo nome do primeiro aluno
+      // ✅ toHaveCount() — confirma que ambos estão na tabela antes de filtrar
+      await expect(page.locator('#tabela-alunos tbody tr')).toHaveCount(2);
+
+      // ✅ getByPlaceholder() — seletor acessível para o campo de busca
       await page.getByPlaceholder('Buscar aluno...').fill('Lucas');
 
-      // Apenas Lucas deve estar visível
+      // ✅ .not.toBeVisible() — garante que o outro aluno sumiu da view
       await expect(page.getByText('Lucas Oliveira')).toBeVisible();
       await expect(page.getByText('Fernanda Rocha')).not.toBeVisible();
     });
@@ -134,14 +155,15 @@ test.describe('QS Acadêmico — Testes do Sistema de Notas', () => {
       await page.getByLabel('Nota 3').fill('9');
       await page.getByRole('button', { name: 'Cadastrar' }).click();
 
-      // Confirmar que o aluno foi cadastrado
       await expect(page.locator('#tabela-alunos tbody tr')).toHaveCount(1);
 
-      // Excluir o aluno
       await page.getByRole('button', { name: 'Excluir' }).click();
 
-      // A tabela deve voltar ao estado vazio
-      await expect(page.locator('#tabela-alunos tbody td.texto-central')).toBeVisible();
+      // ✅ .not.toBeVisible() — nome não deve mais aparecer após exclusão
+      await expect(page.getByText('Rafael Torres')).not.toBeVisible();
+
+      // ✅ getByText() — placeholder deve reaparecer ao esvaziar a tabela
+      await expect(page.getByText('Nenhum aluno cadastrado.')).toBeVisible();
     });
 
   });
@@ -158,7 +180,7 @@ test.describe('QS Acadêmico — Testes do Sistema de Notas', () => {
       await page.getByLabel('Nota 3').fill('9');
       await page.getByRole('button', { name: 'Cadastrar' }).click();
 
-      // Aluno em Recuperação: média >= 5 e < 7
+      // Aluno em Recuperação: 5 <= média < 7
       await page.getByLabel('Nome do Aluno').fill('Recuperacao Teste');
       await page.getByLabel('Nota 1').fill('5');
       await page.getByLabel('Nota 2').fill('6');
@@ -172,7 +194,8 @@ test.describe('QS Acadêmico — Testes do Sistema de Notas', () => {
       await page.getByLabel('Nota 3').fill('1');
       await page.getByRole('button', { name: 'Cadastrar' }).click();
 
-      // Verificar totais nos cards
+      // ✅ toHaveText() — verifica valor exato dos cards de estatística
+      await expect(page.locator('#stat-total')).toHaveText('3');
       await expect(page.locator('#card-aprovados')).toContainText('1');
       await expect(page.locator('#card-recuperacao')).toContainText('1');
       await expect(page.locator('#card-reprovados')).toContainText('1');
@@ -223,6 +246,7 @@ test.describe('QS Acadêmico — Testes do Sistema de Notas', () => {
   test.describe('Múltiplos Cadastros', () => {
 
     test('deve exibir 3 linhas após cadastrar 3 alunos consecutivos', async ({ page }) => {
+      // ✅ BOA PRÁTICA: dados de teste em array evita repetição de código
       const alunos = [
         { nome: 'Aluno Um',   n1: '6', n2: '7', n3: '8' },
         { nome: 'Aluno Dois', n1: '5', n2: '6', n3: '7' },
@@ -237,6 +261,7 @@ test.describe('QS Acadêmico — Testes do Sistema de Notas', () => {
         await page.getByRole('button', { name: 'Cadastrar' }).click();
       }
 
+      // ✅ toHaveCount() — verifica número exato de linhas após múltiplos cadastros
       await expect(page.locator('#tabela-alunos tbody tr')).toHaveCount(3);
     });
 
