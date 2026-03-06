@@ -10,23 +10,22 @@ test.describe('QS Acadêmico — Testes do Sistema de Notas', () => {
   test.describe('Cadastro de Alunos', () => {
 
     test('deve cadastrar um aluno com dados válidos', async ({ page }) => {
-      await page.getByLabel('Nome do Aluno').fill('João Silva');
-      await page.getByLabel('Nota 1').fill('7');
-      await page.getByLabel('Nota 2').fill('8');
-      await page.getByLabel('Nota 3').fill('6');
+      await page.getByRole('textbox', { name: 'Nome do Aluno' }).fill('João Silva');
+      await page.getByRole('spinbutton', { name: 'Nota 1' }).fill('7');
+      await page.getByRole('spinbutton', { name: 'Nota 2' }).fill('8');
+      await page.getByRole('spinbutton', { name: 'Nota 3' }).fill('6');
 
       await page.getByRole('button', { name: 'Cadastrar' }).click();
 
-      // Verificar que o aluno aparece na tabela
       await expect(page.locator('#tabela-alunos tbody tr')).toHaveCount(1);
       await expect(page.getByText('João Silva')).toBeVisible();
     });
 
     test('deve exibir mensagem de sucesso após cadastro', async ({ page }) => {
-      await page.getByLabel('Nome do Aluno').fill('Ana Costa');
-      await page.getByLabel('Nota 1').fill('9');
-      await page.getByLabel('Nota 2').fill('8');
-      await page.getByLabel('Nota 3').fill('10');
+      await page.getByRole('textbox', { name: 'Nome do Aluno' }).fill('Ana Costa');
+      await page.getByRole('spinbutton', { name: 'Nota 1' }).fill('9');
+      await page.getByRole('spinbutton', { name: 'Nota 2' }).fill('8');
+      await page.getByRole('spinbutton', { name: 'Nota 3' }).fill('10');
 
       await page.getByRole('button', { name: 'Cadastrar' }).click();
 
@@ -34,13 +33,12 @@ test.describe('QS Acadêmico — Testes do Sistema de Notas', () => {
     });
 
     test('não deve cadastrar aluno sem nome', async ({ page }) => {
-      await page.getByLabel('Nota 1').fill('7');
-      await page.getByLabel('Nota 2').fill('8');
-      await page.getByLabel('Nota 3').fill('6');
+      await page.getByRole('spinbutton', { name: 'Nota 1' }).fill('7');
+      await page.getByRole('spinbutton', { name: 'Nota 2' }).fill('8');
+      await page.getByRole('spinbutton', { name: 'Nota 3' }).fill('6');
 
       await page.getByRole('button', { name: 'Cadastrar' }).click();
 
-      // A tabela deve continuar sem dados reais
       await expect(page.locator('#tabela-alunos tbody td.texto-central')).toBeVisible();
     });
 
@@ -51,10 +49,10 @@ test.describe('QS Acadêmico — Testes do Sistema de Notas', () => {
   test.describe('Cálculo de Média', () => {
 
     test('deve calcular a média aritmética das três notas', async ({ page }) => {
-      await page.getByLabel('Nome do Aluno').fill('Pedro Santos');
-      await page.getByLabel('Nota 1').fill('8');
-      await page.getByLabel('Nota 2').fill('6');
-      await page.getByLabel('Nota 3').fill('10');
+      await page.getByRole('textbox', { name: 'Nome do Aluno' }).fill('Pedro Santos');
+      await page.getByRole('spinbutton', { name: 'Nota 1' }).fill('8');
+      await page.getByRole('spinbutton', { name: 'Nota 2' }).fill('6');
+      await page.getByRole('spinbutton', { name: 'Nota 3' }).fill('10');
 
       await page.getByRole('button', { name: 'Cadastrar' }).click();
 
@@ -70,10 +68,10 @@ test.describe('QS Acadêmico — Testes do Sistema de Notas', () => {
   test.describe('Validação de Notas', () => {
 
     test('deve rejeitar nota acima de 10', async ({ page }) => {
-      await page.getByLabel('Nome do Aluno').fill('Carlos Lima');
-      await page.getByLabel('Nota 1').fill('11');
-      await page.getByLabel('Nota 2').fill('8');
-      await page.getByLabel('Nota 3').fill('6');
+      await page.getByRole('textbox', { name: 'Nome do Aluno' }).fill('Carlos Lima');
+      await page.getByRole('spinbutton', { name: 'Nota 1' }).fill('11');
+      await page.getByRole('spinbutton', { name: 'Nota 2' }).fill('8');
+      await page.getByRole('spinbutton', { name: 'Nota 3' }).fill('6');
 
       await page.getByRole('button', { name: 'Cadastrar' }).click();
 
@@ -81,10 +79,10 @@ test.describe('QS Acadêmico — Testes do Sistema de Notas', () => {
     });
 
     test('deve rejeitar nota negativa', async ({ page }) => {
-      await page.getByLabel('Nome do Aluno').fill('Mariana Souza');
-      await page.getByLabel('Nota 1').fill('-1');
-      await page.getByLabel('Nota 2').fill('8');
-      await page.getByLabel('Nota 3').fill('6');
+      await page.getByRole('textbox', { name: 'Nome do Aluno' }).fill('Mariana Souza');
+      await page.getByRole('spinbutton', { name: 'Nota 1' }).fill('-1');
+      await page.getByRole('spinbutton', { name: 'Nota 2' }).fill('8');
+      await page.getByRole('spinbutton', { name: 'Nota 3' }).fill('6');
 
       await page.getByRole('button', { name: 'Cadastrar' }).click();
 
@@ -98,16 +96,16 @@ test.describe('QS Acadêmico — Testes do Sistema de Notas', () => {
   test.describe('Busca por Nome', () => {
 
     test('deve exibir apenas o aluno correspondente ao termo buscado', async ({ page }) => {
-      await page.getByLabel('Nome do Aluno').fill('Lucas Oliveira');
-      await page.getByLabel('Nota 1').fill('7');
-      await page.getByLabel('Nota 2').fill('8');
-      await page.getByLabel('Nota 3').fill('9');
+      await page.getByRole('textbox', { name: 'Nome do Aluno' }).fill('Lucas Oliveira');
+      await page.getByRole('spinbutton', { name: 'Nota 1' }).fill('7');
+      await page.getByRole('spinbutton', { name: 'Nota 2' }).fill('8');
+      await page.getByRole('spinbutton', { name: 'Nota 3' }).fill('9');
       await page.getByRole('button', { name: 'Cadastrar' }).click();
 
-      await page.getByLabel('Nome do Aluno').fill('Fernanda Rocha');
-      await page.getByLabel('Nota 1').fill('6');
-      await page.getByLabel('Nota 2').fill('5');
-      await page.getByLabel('Nota 3').fill('7');
+      await page.getByRole('textbox', { name: 'Nome do Aluno' }).fill('Fernanda Rocha');
+      await page.getByRole('spinbutton', { name: 'Nota 1' }).fill('6');
+      await page.getByRole('spinbutton', { name: 'Nota 2' }).fill('5');
+      await page.getByRole('spinbutton', { name: 'Nota 3' }).fill('7');
       await page.getByRole('button', { name: 'Cadastrar' }).click();
 
       await expect(page.locator('#tabela-alunos tbody tr')).toHaveCount(2);
@@ -125,10 +123,10 @@ test.describe('QS Acadêmico — Testes do Sistema de Notas', () => {
   test.describe('Exclusão de Aluno', () => {
 
     test('deve remover o aluno e deixar a tabela vazia', async ({ page }) => {
-      await page.getByLabel('Nome do Aluno').fill('Rafael Torres');
-      await page.getByLabel('Nota 1').fill('8');
-      await page.getByLabel('Nota 2').fill('7');
-      await page.getByLabel('Nota 3').fill('9');
+      await page.getByRole('textbox', { name: 'Nome do Aluno' }).fill('Rafael Torres');
+      await page.getByRole('spinbutton', { name: 'Nota 1' }).fill('8');
+      await page.getByRole('spinbutton', { name: 'Nota 2' }).fill('7');
+      await page.getByRole('spinbutton', { name: 'Nota 3' }).fill('9');
       await page.getByRole('button', { name: 'Cadastrar' }).click();
 
       await expect(page.locator('#tabela-alunos tbody tr')).toHaveCount(1);
@@ -147,29 +145,29 @@ test.describe('QS Acadêmico — Testes do Sistema de Notas', () => {
 
     test('deve exibir totais corretos nos cards de estatísticas', async ({ page }) => {
       // Aluno Aprovado: média >= 7
-      await page.getByLabel('Nome do Aluno').fill('Aprovado Teste');
-      await page.getByLabel('Nota 1').fill('8');
-      await page.getByLabel('Nota 2').fill('7');
-      await page.getByLabel('Nota 3').fill('9');
+      await page.getByRole('textbox', { name: 'Nome do Aluno' }).fill('Aprovado Teste');
+      await page.getByRole('spinbutton', { name: 'Nota 1' }).fill('8');
+      await page.getByRole('spinbutton', { name: 'Nota 2' }).fill('7');
+      await page.getByRole('spinbutton', { name: 'Nota 3' }).fill('9');
       await page.getByRole('button', { name: 'Cadastrar' }).click();
 
       // Aluno em Recuperação: 5 <= média < 7
-      await page.getByLabel('Nome do Aluno').fill('Recuperacao Teste');
-      await page.getByLabel('Nota 1').fill('5');
-      await page.getByLabel('Nota 2').fill('6');
-      await page.getByLabel('Nota 3').fill('5');
+      await page.getByRole('textbox', { name: 'Nome do Aluno' }).fill('Recuperacao Teste');
+      await page.getByRole('spinbutton', { name: 'Nota 1' }).fill('5');
+      await page.getByRole('spinbutton', { name: 'Nota 2' }).fill('6');
+      await page.getByRole('spinbutton', { name: 'Nota 3' }).fill('5');
       await page.getByRole('button', { name: 'Cadastrar' }).click();
 
       // Aluno Reprovado: média < 5
-      await page.getByLabel('Nome do Aluno').fill('Reprovado Teste');
-      await page.getByLabel('Nota 1').fill('2');
-      await page.getByLabel('Nota 2').fill('3');
-      await page.getByLabel('Nota 3').fill('1');
+      await page.getByRole('textbox', { name: 'Nome do Aluno' }).fill('Reprovado Teste');
+      await page.getByRole('spinbutton', { name: 'Nota 1' }).fill('2');
+      await page.getByRole('spinbutton', { name: 'Nota 2' }).fill('3');
+      await page.getByRole('spinbutton', { name: 'Nota 3' }).fill('1');
       await page.getByRole('button', { name: 'Cadastrar' }).click();
 
-      await expect(page.locator('#card-aprovados')).toContainText('1');
-      await expect(page.locator('#card-recuperacao')).toContainText('1');
-      await expect(page.locator('#card-reprovados')).toContainText('1');
+      await expect(page.locator('#stat-aprovados')).toContainText('1');
+      await expect(page.locator('#stat-recuperacao')).toContainText('1');
+      await expect(page.locator('#stat-reprovados')).toContainText('1');
     });
 
   });
@@ -179,10 +177,10 @@ test.describe('QS Acadêmico — Testes do Sistema de Notas', () => {
   test.describe('Situação — Aprovado', () => {
 
     test('deve exibir situação "Aprovado" para média >= 7', async ({ page }) => {
-      await page.getByLabel('Nome do Aluno').fill('Bianca Ferreira');
-      await page.getByLabel('Nota 1').fill('7');
-      await page.getByLabel('Nota 2').fill('8');
-      await page.getByLabel('Nota 3').fill('9');
+      await page.getByRole('textbox', { name: 'Nome do Aluno' }).fill('Bianca Ferreira');
+      await page.getByRole('spinbutton', { name: 'Nota 1' }).fill('7');
+      await page.getByRole('spinbutton', { name: 'Nota 2' }).fill('8');
+      await page.getByRole('spinbutton', { name: 'Nota 3' }).fill('9');
 
       await page.getByRole('button', { name: 'Cadastrar' }).click();
 
@@ -198,10 +196,10 @@ test.describe('QS Acadêmico — Testes do Sistema de Notas', () => {
   test.describe('Situação — Reprovado', () => {
 
     test('deve exibir situação "Reprovado" para média < 5', async ({ page }) => {
-      await page.getByLabel('Nome do Aluno').fill('Gustavo Mendes');
-      await page.getByLabel('Nota 1').fill('3');
-      await page.getByLabel('Nota 2').fill('4');
-      await page.getByLabel('Nota 3').fill('2');
+      await page.getByRole('textbox', { name: 'Nome do Aluno' }).fill('Gustavo Mendes');
+      await page.getByRole('spinbutton', { name: 'Nota 1' }).fill('3');
+      await page.getByRole('spinbutton', { name: 'Nota 2' }).fill('4');
+      await page.getByRole('spinbutton', { name: 'Nota 3' }).fill('2');
 
       await page.getByRole('button', { name: 'Cadastrar' }).click();
 
@@ -224,10 +222,10 @@ test.describe('QS Acadêmico — Testes do Sistema de Notas', () => {
       ];
 
       for (const aluno of alunos) {
-        await page.getByLabel('Nome do Aluno').fill(aluno.nome);
-        await page.getByLabel('Nota 1').fill(aluno.n1);
-        await page.getByLabel('Nota 2').fill(aluno.n2);
-        await page.getByLabel('Nota 3').fill(aluno.n3);
+        await page.getByRole('textbox', { name: 'Nome do Aluno' }).fill(aluno.nome);
+        await page.getByRole('spinbutton', { name: 'Nota 1' }).fill(aluno.n1);
+        await page.getByRole('spinbutton', { name: 'Nota 2' }).fill(aluno.n2);
+        await page.getByRole('spinbutton', { name: 'Nota 3' }).fill(aluno.n3);
         await page.getByRole('button', { name: 'Cadastrar' }).click();
       }
 
