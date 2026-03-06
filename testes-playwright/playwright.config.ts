@@ -25,7 +25,7 @@ export default defineConfig({
   reporter: 'html',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
-    baseURL: 'https://yasoaresss.github.io/02-TesteAutomatizado',
+    baseURL: 'https://yasoaresss.github.io/02-TesteAutomatizado/',
     trace: 'on-first-retry',
   },
 
