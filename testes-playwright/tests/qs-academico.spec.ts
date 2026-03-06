@@ -19,7 +19,7 @@ test.describe('QS Acadêmico — Testes do Sistema de Notas', () => {
       await page.getByRole('button', { name: 'Cadastrar' }).click();
 
       await expect(page.locator('#tabela-alunos tbody tr')).toHaveCount(1);
-      await expect(page.getByText('João Silva')).toBeVisible();
+      await expect(page.getByRole('cell', { name: 'João Silva', exact: true })).toBeVisible();
     });
 
     test('deve exibir mensagem de sucesso após cadastro', async ({ page }) => {
@@ -70,7 +70,7 @@ test.describe('QS Acadêmico — Testes do Sistema de Notas', () => {
 
     test('deve rejeitar nota acima de 10', async ({ page }) => {
       await page.getByRole('textbox', { name: 'Nome do Aluno' }).fill('Carlos Lima');
-      await page.getByRole('spinbutton', { name: 'Nota 1' }).fill('11');
+      await page.getByRole('spinbutton', { name: 'Nota 1' }).fill('11', { force: true });
       await page.getByRole('spinbutton', { name: 'Nota 2' }).fill('8');
       await page.getByRole('spinbutton', { name: 'Nota 3' }).fill('6');
 
@@ -81,7 +81,7 @@ test.describe('QS Acadêmico — Testes do Sistema de Notas', () => {
 
     test('deve rejeitar nota negativa', async ({ page }) => {
       await page.getByRole('textbox', { name: 'Nome do Aluno' }).fill('Mariana Souza');
-      await page.getByRole('spinbutton', { name: 'Nota 1' }).fill('-1');
+      await page.getByRole('spinbutton', { name: 'Nota 1' }).fill('-1', { force: true });
       await page.getByRole('spinbutton', { name: 'Nota 2' }).fill('8');
       await page.getByRole('spinbutton', { name: 'Nota 3' }).fill('6');
 
@@ -112,8 +112,9 @@ test.describe('QS Acadêmico — Testes do Sistema de Notas', () => {
       await expect(page.locator('#tabela-alunos tbody tr')).toHaveCount(2);
 
       await page.getByRole('textbox', { name: 'Buscar por nome' }).fill('Lucas');
-      await expect(page.getByText('Lucas Oliveira')).toBeVisible();
-      await expect(page.getByText('Fernanda Rocha')).not.toBeVisible();
+
+      await expect(page.getByRole('cell', { name: 'Lucas Oliveira', exact: true })).toBeVisible();
+      await expect(page.getByRole('cell', { name: 'Fernanda Rocha', exact: true })).not.toBeVisible();
     });
 
   });
@@ -131,9 +132,9 @@ test.describe('QS Acadêmico — Testes do Sistema de Notas', () => {
 
       await expect(page.locator('#tabela-alunos tbody tr')).toHaveCount(1);
 
-      await page.getByRole('button', { name: 'Excluir' }).click();
+      await page.getByRole('button', { name: 'Excluir Rafael Torres' }).click();
 
-      await expect(page.getByText('Rafael Torres')).not.toBeVisible();
+      await expect(page.getByRole('cell', { name: 'Rafael Torres', exact: true })).not.toBeVisible();
       await expect(page.locator('#tabela-alunos tbody td.texto-central')).toBeVisible();
     });
 
