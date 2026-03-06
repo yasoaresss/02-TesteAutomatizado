@@ -111,8 +111,7 @@ test.describe('QS Acadêmico — Testes do Sistema de Notas', () => {
 
       await expect(page.locator('#tabela-alunos tbody tr')).toHaveCount(2);
 
-      await page.getByPlaceholder('Buscar aluno...').fill('Lucas');
-
+      await page.getByRole('textbox', { name: 'Buscar por nome' }).fill('Lucas');
       await expect(page.getByText('Lucas Oliveira')).toBeVisible();
       await expect(page.getByText('Fernanda Rocha')).not.toBeVisible();
     });
